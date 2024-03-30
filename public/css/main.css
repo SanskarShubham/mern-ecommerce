@@ -171,10 +171,12 @@ form {
 
 .card__image {
   width: 100%;
+ 
 }
 
 .card__image img {
   width: 100%;
+  max-height: 16rem;
 }
 
 .card__actions {
