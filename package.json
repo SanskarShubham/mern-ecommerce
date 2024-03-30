@@ -11,16 +11,17 @@
   "author": "Maximilian Schwarzmüller",
   "license": "ISC",
   "devDependencies": {
-    "nodemon": "^1.18.3"
+    "nodemon": "^3.1.0"
   },
   "dependencies": {
     "body-parser": "^1.18.3",
     "dotenv": "^16.4.5",
-    "ejs": "^2.6.1",
+    "ejs": "^3.1.9",
     "express": "^4.16.3",
-    "express-handlebars": "^3.0.0",
+    "express-handlebars": "^7.1.2",
+    "mongodb": "6.5",
     "mysql2": "^3.9.3",
-    "pug": "^2.0.3",
+    "pug": "^3.0.2",
     "sequelize": "^6.37.1"
   }
 }
