@@ -45,10 +45,7 @@ class User {
     const productIds = this.cart.items.map(i => {
       return i.productId;
     });
-    const products = await db
-      .collection('products')
-      .find({ _id: { $in: productIds } })
-      .toArray();
+    const products = await db.collection('products').find({ _id: { $in: productIds } }).toArray();
     const productsCart = products.map(p => {
       return {
         ...p,
@@ -57,7 +54,7 @@ class User {
         }).quantity
       }
     })
-    console.log(productsCart);
+    // console.log(productsCart);
     return productsCart;
   }
   deleteItemFromCart(productId) {
@@ -65,13 +62,37 @@ class User {
     const db = getDB();
     return db.collection('users').updateOne(
       { _id: new mongodb.ObjectId(this._id) },
-      { $set: { cart: {items: updatedCartItems} } }
+      { $set: { cart: { items: updatedCartItems } } }
     )
   }
   static async findById(id) {
     const db = getDB();
     const user = await db.collection('users').findOne({ _id: new mongodb.ObjectId(id) });
     return user;
+  }
+
+  async createOrder() {
+    const db = getDB();
+    const cartProducts = await this.getCart();
+    const orderData = {
+      items: cartProducts,
+      user: {
+        _id: new mongodb.ObjectId(this._id),
+        name: this.name
+      }
+    }
+    const order = await db.collection('orders').insertOne(orderData);
+    this.cart = { items: [] };
+    return await db.collection('users').updateOne(
+      { _id: new mongodb.ObjectId(this._id) },
+      { $set: { cart: { items: [] } } }
+    )
+  }
+
+  async getOrders() {
+    const db = getDB();
+    const orders = await db.collection('orders').find({ 'user._id': new mongodb.ObjectId(this._id) }).toArray();
+    return orders;
   }
 }
 module.exports = User;
