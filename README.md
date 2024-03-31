@@ -9,7 +9,8 @@ This e-commerce website is designed to provide a user-friendly interface for bro
 ## Technologies Used
 
 - **Express**: A Node.js web application framework used for building the backend server.
-- **MySQL**: A relational database management system used for storing product information, user data, and order details.
+- **MySQL**: A relational database management system used for storing product information, user data, and order details.(in first commit )
+- **mongoDB**: after first commit database change to MySQL to MongoDB. 
 - **HTML**: Used for structuring the web pages and displaying content.
 - **CSS**: Used for styling the web pages and enhancing the user interface.
 - **JavaScript**: Used for implementing dynamic behavior, client-side validation, and interacting with the backend server.
