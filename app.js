@@ -7,6 +7,7 @@ const bodyParser = require('body-parser');
 const errorController = require('./controllers/error');
 
 const  {mongoClient} = require('./util/database');
+const User = require('./models/user');
 const app = express();
 
 app.set('view engine', 'ejs');
@@ -18,14 +19,16 @@ const shopRoutes = require('./routes/shop');
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-// app.use((req, res, next) => {
-//   User.findByPk(1)
-//     .then(user => {
-//       req.user = user;
-//       next();
-//     })
-//     .catch(err => console.log(err));
-// });
+app.use((req, res, next) => {
+  User.findById('66082e5eb35f7d13168bc59a')
+    .then(user => {
+      // console.log(user);
+      req.user = new User(user.name, user.email, user.cart, user._id);
+      // console.log(req.user);
+      next();
+    })
+    .catch(err => console.log(err));
+});
 
 app.use('/admin', adminRoutes);
  app.use(shopRoutes);

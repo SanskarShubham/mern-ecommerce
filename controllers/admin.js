@@ -15,7 +15,7 @@ exports.postAddProduct = async (req, res, next) => {
     const imageUrl = req.body.imageUrl;
     const price = req.body.price;
     const description = req.body.description;
-    const product = new Product(title, imageUrl, description, price);
+    const product = new Product(title, imageUrl, description, price,req.user._id);
     const result = await product.save();
     console.log(result);
     if (result) {
@@ -58,8 +58,7 @@ exports.postEditProduct = async (req, res, next) => {
     const updatedPrice = req.body.price;
     const updatedImageUrl = req.body.imageUrl;
     const updatedDesc = req.body.description;
-    console.log(req.body);
-    const product = new Product(updatedTitle, updatedImageUrl, updatedDesc, updatedPrice);
+    const product = new Product(updatedTitle, updatedImageUrl, updatedDesc, updatedPrice,req.user._id);
     const result = await product.save(prodId);
 
     console.log('UPDATED PRODUCT!');
@@ -83,15 +82,14 @@ exports.getProducts = (req, res, next) => {
     .catch(err => console.log(err));
 };
 
-exports.postDeleteProduct = (req, res, next) => {
-  const prodId = req.body.productId;
-  Product.findByPk(prodId)
-    .then(product => {
-      return product.destroy();
-    })
-    .then(result => {
-      console.log('DESTROYED PRODUCT');
-      res.redirect('/admin/products');
-    })
-    .catch(err => console.log(err));
+exports.postDeleteProduct = async (req, res, next) => {
+  try {
+    const prodId = req.body.productId;
+    await Product.deleteById(prodId);
+        console.log('PRODUCT DELETED!');
+        res.redirect('/admin/products');
+  } catch (error) {
+      console.log(error);    
+  }
+
 };
