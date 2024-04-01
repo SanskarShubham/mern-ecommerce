@@ -3,10 +3,11 @@ const path = require('path');
 
 const express = require('express');
 const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
 
 const errorController = require('./controllers/error');
 
-const  {mongoClient} = require('./util/database');
+// const { mongoClient } = require('./util/database');
 const User = require('./models/user');
 const app = express();
 
@@ -20,24 +21,39 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use((req, res, next) => {
-  User.findById('66082e5eb35f7d13168bc59a')
+  User.findById('660ade1920f023c7755bee96')
     .then(user => {
-      // console.log(user);
-      req.user = new User(user.name, user.email, user.cart, user._id);
-      // console.log(req.user);
+      req.user = user;
       next();
     })
     .catch(err => console.log(err));
 });
 
 app.use('/admin', adminRoutes);
- app.use(shopRoutes);
+app.use(shopRoutes);
 
- app.use(errorController.get404);
+app.use(errorController.get404);
 
-mongoClient(function()  {
-  console.log('Connected successfully to DB server'); 
+const password = process.env.MONGO_DB_PASSWORD;
+const encodedPassword = encodeURIComponent(password);
+
+
+
+mongoose.connect(`mongodb+srv://${process.env.MONGO_DB_USER}:${encodedPassword}@cluster0.hroigvw.mongodb.net/shop?retryWrites=true&w=majority&appName=Cluster0`).then(result => {
+  User.findOne().then(user => {
+    if (!user) {
+      const user = new User({
+        name: 'Shubham Ojha',
+        email: 'shubham@gamil.com',
+        cart: {
+          items : []
+        }
+      })
+      user.save();  
+    }
+  })
+  console.log('Connected successfully to DB server');
   app.listen(3000);
   console.log('Listening on port 3000');
-});
-// i want to connect to the mongo db database that i created in util folder
+})
+

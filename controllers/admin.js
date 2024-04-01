@@ -15,7 +15,7 @@ exports.postAddProduct = async (req, res, next) => {
     const imageUrl = req.body.imageUrl;
     const price = req.body.price;
     const description = req.body.description;
-    const product = new Product(title, imageUrl, description, price,req.user._id);
+    const product = new Product({ title, imageUrl, description, price });
     const result = await product.save();
     console.log(result);
     if (result) {
@@ -36,7 +36,7 @@ exports.getEditProduct = (req, res, next) => {
   Product.findById(prodId)
     // Product.findByPk(prodId)
     .then(product => {
-     
+
       if (!product) {
         return res.redirect('/');
       }
@@ -58,8 +58,13 @@ exports.postEditProduct = async (req, res, next) => {
     const updatedPrice = req.body.price;
     const updatedImageUrl = req.body.imageUrl;
     const updatedDesc = req.body.description;
-    const product = new Product(updatedTitle, updatedImageUrl, updatedDesc, updatedPrice,req.user._id);
-    const result = await product.save(prodId);
+
+    const product = await Product.findById(prodId);
+    product.title = updatedTitle;
+    product.price = updatedPrice;
+    product.description = updatedDesc;
+    product.imageUrl = updatedImageUrl;
+    await product.save(prodId);
 
     console.log('UPDATED PRODUCT!');
     res.redirect('/admin/products');
@@ -71,7 +76,7 @@ exports.postEditProduct = async (req, res, next) => {
 };
 
 exports.getProducts = (req, res, next) => {
-  Product.findAll()
+  Product.find()
     .then(products => {
       res.render('admin/products', {
         prods: products,
@@ -85,11 +90,11 @@ exports.getProducts = (req, res, next) => {
 exports.postDeleteProduct = async (req, res, next) => {
   try {
     const prodId = req.body.productId;
-    await Product.deleteById(prodId);
-        console.log('PRODUCT DELETED!');
-        res.redirect('/admin/products');
+    await Product.findByIdAndDelete(prodId);
+    console.log('PRODUCT DELETED!');
+    res.redirect('/admin/products');
   } catch (error) {
-      console.log(error);    
+    console.log(error);
   }
 
 };
