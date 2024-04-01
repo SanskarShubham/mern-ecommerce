@@ -16,14 +16,14 @@ const productSchema = new mongoose.Schema({
   imageUrl: {
     type: String,
     required: true
+  },
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
   }
-  // userId: {
-  //   type: mongoose.Schema.Types.ObjectId,
-  //   ref: 'User',
-  //   required: true
-  // }
 })
-
+module.exports = mongoose.model('Product', productSchema);
 
 // const { getDB } = require('../util/database');
 // const mongodb = require('mongodb');
@@ -86,4 +86,4 @@ const productSchema = new mongoose.Schema({
 //   }
 // }
 
- module.exports = mongoose.model('Product', productSchema);
+
